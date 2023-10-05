@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  server:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./target/practice5-0.0.1-SNAPSHOT.jar:/app.jar
+    command: ["java", "-jar", "/app.jar"]
+    restart: on-failure
+    depends_on:
+      - db
+  db:
+    image: postgres
+    volumes:
+      - "pgdata:/var/lib/postgresql:JSPWithPostgresql"
+    environment:
+      POSTGRES_ROOT_PASSWORD: postgres
+      POSTGRES_DB: JSPWithPostgresql
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: StReKoZa1ypmk
+volumes:
+  pgdata: {}
