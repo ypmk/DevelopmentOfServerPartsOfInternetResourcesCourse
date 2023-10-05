@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  db:
+    build: ./db
+    environment:
+      - MYSQL_DATABASE=table1
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - db_data_3:/var/lib/mysql
+
+  apache_php:
+    image: polinux/httpd-php
+    depends_on:
+      - db
+    volumes:
+      - ./files/dynamic:/var/www/html/
+  
+  nginx:
+    build: ./nginx
+    depends_on:
+      - apache_php
+    ports:
+      - 80:80
+    volumes:
+      - ./files/static:/site
+
+volumes:
+  db_data_3:
+  
