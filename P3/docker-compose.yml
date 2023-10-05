@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  webserver:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    container_name: rschir_webserver_pr3_new
+    restart: always
+    volumes:
+      - ./files:/var/www/html
+    ports:
+      - "80:80"
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:latest
+    container_name: rschir_db_pr3_new
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_DATABASE: appDB
+    volumes:
+      - pr3db:/var/lib/mysql
+      - './files/init.sql:/docker-entrypoint-initdb.d/init.sql'
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  pr3db:
