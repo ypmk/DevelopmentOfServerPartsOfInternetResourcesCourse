@@ -1,0 +1,37 @@
+version: "3"
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=Mgo
+    volumes:
+      - ./mongo-volume:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+  curl:
+        image: praqma/network-multitool
+        restart: always
+        container_name: curl_9
+        hostname: curl_9
+  nginx:
+        image: nginx
+        restart: always
+        ports:
+            - "80:80"
+        depends_on:
+            - app
+        container_name: nginx_9    
+        hostname: nginx_9
+        volumes:
+            - ./nginx/src:/usr/share/nginx/html
+            - ./nginx/templates:/etc/nginx/templates
+            - ./nginx/log:/var/log/nginx
+        environment:
+            - NGINX_NAME=nginx_9
