@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+
+    golang:
+        image: golang
+        restart: always
+        container_name: golang
+        hostname: golang
+        volumes:
+            - ./golang/bin:/usr/local/bin
+        expose:
+            - "8888" # Publishes 5555 to other containers but NOT to host machine
+        ports:
+            - "8888:8888"
+        working_dir: /usr/local/bin
+        command:            
+            - /usr/local/bin/server
+
+    curl:
+        image: praqma/network-multitool
+        restart: always
+        container_name: curl
+        hostname: curl
+        
+    nginx:
+        image: nginx
+        restart: always
+        ports:
+            - "80:80"
+        depends_on:
+            - golang
+        container_name: nginx    
+        hostname: nginx
+        volumes:
+            - ./nginx/src:/usr/share/nginx/html
+            - ./nginx/templates:/etc/nginx/templates
+            - ./nginx/log:/var/log/nginx
+        environment:
+            - NGINX_NAME=nginx

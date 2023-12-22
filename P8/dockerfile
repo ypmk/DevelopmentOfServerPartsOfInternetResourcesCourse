@@ -1,0 +1,17 @@
+FROM golang:1.21
+
+WORKDIR /usr/src/app
+
+COPY source/go.mod ./
+COPY source/go.sum ./
+
+RUN go mod download && go mod verify
+
+COPY source/ .
+RUN mkdir /usr/local/bin/server_app
+RUN go build -o /usr/local/bin/server_app
+
+WORKDIR /usr/local/bin/server_app
+CMD ./server
+
+
